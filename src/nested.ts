@@ -6,8 +6,11 @@ import { Question, QuestionType } from "./interfaces/question";
  * that are `published`.
  */
 export function getPublishedQuestions(questions: Question[]): Question[] {
-    const newArray = [...questions, questions.published];
-    return [];
+    const publishedMovies = [
+        ...questions.filter((movie: Question): boolean => movie.published),
+    ];
+    const newArray = [...publishedMovies];
+    return newArray;
 }
 
 /**
@@ -16,7 +19,18 @@ export function getPublishedQuestions(questions: Question[]): Question[] {
  * `expected`, and an empty array for its `options`.
  */
 export function getNonEmptyQuestions(questions: Question[]): Question[] {
-    return [];
+    const filteringQuestions = questions.filter(
+        (question: Question): boolean =>
+            (
+                question.body == "" &&
+                question.expected == "" &&
+                question.options.length == 0
+            ) ?
+                false
+            :   true,
+    );
+
+    return filteringQuestions;
 }
 
 /***
@@ -27,7 +41,7 @@ export function findQuestion(
     questions: Question[],
     id: number,
 ): Question | null {
-    return null;
+    return questions.find((q: Question): boolean => q.id === id) ?? null;
 }
 
 /**
@@ -35,7 +49,11 @@ export function findQuestion(
  * with the given `id`.
  */
 export function removeQuestion(questions: Question[], id: number): Question[] {
-    return [];
+    const removed = questions.filter((questions: Question): boolean =>
+        questions.id !== id ? true : false,
+    );
+    //I could not use the ternary if because adding the 'true:false' is redunant but I just wanted it for my sake
+    return removed;
 }
 
 /***
@@ -43,21 +61,35 @@ export function removeQuestion(questions: Question[], id: number): Question[] {
  * questions, as an array.
  */
 export function getNames(questions: Question[]): string[] {
-    return [];
+    const onlyNames = questions.map((names: Question): string => names.name);
+    return onlyNames;
 }
 
 /***
  * Consumes an array of questions and returns the sum total of all their points added together.
  */
 export function sumPoints(questions: Question[]): number {
-    return 0;
+    const sum = questions.reduce(
+        (count: number, pointCount: Question): number =>
+            count + pointCount.points,
+        0,
+    );
+    return sum;
 }
 
 /***
  * Consumes an array of questions and returns the sum total of the PUBLISHED questions.
  */
 export function sumPublishedPoints(questions: Question[]): number {
-    return 0;
+    const publishedQuestion = questions.filter(
+        (q: Question): boolean => q.published,
+    );
+    const sum = publishedQuestion.reduce(
+        (count: number, publishedCount: Question): number =>
+            count + publishedCount.points,
+        0,
+    );
+    return sum;
 }
 
 /***
@@ -78,7 +110,12 @@ id,name,options,points,published
  * Check the unit tests for more examples!
  */
 export function toCSV(questions: Question[]): string {
-    return "";
+    const header = "id,name,options,points,published";
+    const format = questions.map(
+        (q: Question) =>
+            `${q.id},${q.name},${q.options.length},${q.points},${q.published}`,
+    );
+    return [header, ...format].join("\n");
 }
 
 /**
@@ -87,7 +124,14 @@ export function toCSV(questions: Question[]): string {
  * making the `text` an empty string, and using false for both `submitted` and `correct`.
  */
 export function makeAnswers(questions: Question[]): Answer[] {
-    return [];
+    const answersArray = questions.map((q: Question) => ({
+        questionId: q.id,
+        text: "",
+        submitted: false,
+        correct: false,
+    }));
+
+    return answersArray;
 }
 
 /***
