@@ -1,5 +1,6 @@
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
+import { duplicateQuestion, makeBlankQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -151,7 +152,14 @@ export function publishAll(questions: Question[]): Question[] {
  * are the same type. They can be any type, as long as they are all the SAME type.
  */
 export function sameType(questions: Question[]): boolean {
-    return false;
+    if (questions.length === 0) {
+        return true;
+    }
+    const firstType = questions[0].type;
+    const same = questions.every((q: Question): boolean =>
+        q.type === firstType ? true : false,
+    );
+    return same;
 }
 
 /***
@@ -165,7 +173,8 @@ export function addNewQuestion(
     name: string,
     type: QuestionType,
 ): Question[] {
-    return [];
+    const newQ = makeBlankQuestion(id, name, type);
+    return [...questions, newQ];
 }
 
 /***
@@ -178,7 +187,10 @@ export function renameQuestionById(
     targetId: number,
     newName: string,
 ): Question[] {
-    return [];
+    const newObject = questions.map((q: Question) =>
+        targetId === q.id ? { ...q, name: newName } : q,
+    );
+    return newObject;
 }
 
 /***
@@ -193,7 +205,19 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType,
 ): Question[] {
-    return [];
+    const newObject = questions.map((q: Question) =>
+        q.id === targetId ?
+            {
+                ...q,
+                type: newQuestionType,
+                options:
+                    newQuestionType === "multiple_choice_question" ?
+                        q.options
+                    :   [],
+            }
+        :   q,
+    );
+    return newObject;
 }
 
 /**
@@ -212,7 +236,23 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string,
 ): Question[] {
-    return [];
+    // const newOpt = questions.map((opt, idx) =>
+    //     idx === targetOptionIndex ? newOption : opt,
+    // );
+    const newObject = questions.map((q: Question) =>
+        targetId === q.id ?
+            {
+                ...q,
+                options:
+                    targetOptionIndex === -1 ?
+                        [...q.options, newOption]
+                    :   q.options.map((opt, idx) =>
+                            idx === targetOptionIndex ? newOption : opt,
+                        ),
+            }
+        :   q,
+    );
+    return newObject;
 }
 
 /***
@@ -226,5 +266,8 @@ export function duplicateQuestionInArray(
     targetId: number,
     newId: number,
 ): Question[] {
-    return [];
+    const newA = questions.flatMap((q: Question) =>
+        q.id === targetId ? [q, duplicateQuestion(newId, q)] : [q],
+    );
+    return newA;
 }
