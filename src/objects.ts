@@ -85,7 +85,7 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    const firstLine = `# ${question.name}`;
+    const firstLine = `# ${question.name}\n`;
     const secondLine = `${question.body}`;
     let combine = firstLine + secondLine;
     if (question.type === "multiple_choice_question") {
