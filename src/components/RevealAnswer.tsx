@@ -12,7 +12,7 @@ export function RevealAnswer(): React.JSX.Element {
             >
                 Reveal Answer
             </Button>
-            {visible && <p>42</p>}
+            {visible && <div>42</div>}
         </div>
     );
 }
